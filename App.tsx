@@ -1,12 +1,12 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function DiceApp() {
   const [diceNumber, setDiceNumber] = useState(1);
 
   const rollDice = () => {
-    const numberOfChanges = Math.floor(Math.random() * 10) + 5; // Vai mudar entre 5 a 14 vezes
+    const numberOfChanges = Math.floor(Math.random() * 10) + 5;
     let currentChange = 0;
 
     const intervalId = setInterval(() => {
@@ -20,19 +20,37 @@ export default function DiceApp() {
       currentChange += 1;
       if (currentChange >= numberOfChanges) {
         clearInterval(intervalId);
-        // Aqui você pode chamar uma função final, se desejar
       }
-    }, 30); // Muda o número a cada 100ms
+    }, 30);
+  };
+
+  const closeApp = () => {
+    if (Platform.OS === 'android') {
+      BackHandler.exitApp();
+    } else {
+      alert('No iOS, aplicativos não são fechados programaticamente.');
+    }
   };
 
   return (
-    <LinearGradient colors={['#00416A', '#E4E5E6']} style={styles.container}>
+    <LinearGradient
+      locations={[0, 0.4, 0.4, 1]}
+      colors={['#10517A', '#10517A', '#F0F1FA', '#FFF']}
+      style={styles.container}
+    >
       <View>
-        {/* Simulando a imagem do dado */}
-        <Text style={styles.dice}>🎲 {diceNumber}</Text>
+        <Text style={styles.dice}>🎲</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={rollDice}>
-        <Text style={styles.buttonText}>Jogue o dado</Text>
+
+      <View>
+        <Text style={styles.number}>{diceNumber}</Text>
+        <TouchableOpacity style={styles.button} onPress={rollDice}>
+          <Text style={styles.buttonText}>Jogue o dado</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.closeButton} onPress={closeApp}>
+        <Text style={styles.closeButtonText}>X</Text>
       </TouchableOpacity>
     </LinearGradient>
   );
@@ -42,19 +60,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 50,
   },
   dice: {
+    marginTop: '30%',
     fontSize: 100,
-    marginBottom: 30,
+  },
+  number: {
+    fontSize: 100,
+    textAlign: 'center',
   },
   button: {
-    backgroundColor: '#00416A',
+    backgroundColor: '#10517A',
     padding: 20,
     borderRadius: 5,
+    marginTop: 20,
   },
   buttonText: {
     color: '#fff',
     fontSize: 20,
+  },
+  closeButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#10517A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 22,
+    lineHeight: 25,
   },
 });
